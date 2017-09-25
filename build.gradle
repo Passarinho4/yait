@@ -1,0 +1,27 @@
+group 'xd.yolo'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'scala'
+
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://repo.spring.io/libs-milestone'
+    }
+}
+
+dependencies {
+    compile 'org.scala-lang:scala-library:2.12.2'
+    compile "org.springframework.boot:spring-boot-starter-web:2.0.0.M4"
+    compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-scala_2.12', version: '2.9.1'
+    compile "org.mongodb.scala:mongo-scala-driver_2.12:2.1.0"
+
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.2'
+}
