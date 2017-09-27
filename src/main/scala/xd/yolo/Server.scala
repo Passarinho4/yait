@@ -1,20 +1,19 @@
 package xd.yolo
 
+import com.avsystem.commons.mongo.sync.MongoOps
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import org.mongodb.scala.{MongoClient, MongoCollection, MongoDatabase}
+import com.mongodb.MongoClient
+import com.mongodb.client.MongoDatabase
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
-import org.mongodb.scala.bson.codecs.Macros._
-import org.mongodb.scala.bson.codecs.DEFAULT_CODEC_REGISTRY
-import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
+import xd.yolo.model._
 
 object Server extends App {
 
   private val run: Array[Class[_]] = Array(classOf[MainConfig])
   SpringApplication.run(run, args)
-
 
 }
 
@@ -23,8 +22,6 @@ object Server extends App {
 @ComponentScan
 class MainConfig {
 
-  val codecRegistry = fromRegistries(fromProviders(classOf[Person]), DEFAULT_CODEC_REGISTRY )
-
   @Bean
   def mapper: ObjectMapper = {
     val mapper = new ObjectMapper()
@@ -32,12 +29,12 @@ class MainConfig {
     mapper
   }
 
-  @Bean def mongoClient: MongoClient = MongoClient()
+  @Bean def mongoClient: MongoClient = new MongoClient()
 
-  @Bean def database: MongoDatabase = mongoClient.getDatabase("mydb").withCodecRegistry(codecRegistry)
+  @Bean def database: MongoDatabase = mongoClient.getDatabase("mydb")
 
-  @Bean def collection: MongoCollection[Person] = database.getCollection("test")
+  @Bean def topicService: TopicService = new MongoTopicService(MongoTopicService.getCollection(database))
+
 
 }
 
-case class Person(name:String, cos:List[String])
