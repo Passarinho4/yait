@@ -1,6 +1,5 @@
 package xd.yolo
 
-import com.avsystem.commons.mongo.sync.MongoOps
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.mongodb.MongoClient
@@ -35,6 +34,7 @@ class MainConfig {
 
   @Bean def topicService: TopicService = new MongoTopicService(MongoTopicService.getCollection(database))
 
+  @Bean def postService: PostService = new MongoPostService(MongoPostService.getCollection(database))
 
 }
 

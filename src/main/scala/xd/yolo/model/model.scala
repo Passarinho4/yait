@@ -7,7 +7,12 @@ case class UserId(id: String)
 
 case class VotingToken(token: String)
 
-case class Post(topicId: ObjectId, authorId: UserId, content: String)
+case class Post(id: ObjectId, topicId: ObjectId, authorId: UserId, content: String)
+
+object Post {
+  def apply(topicId: ObjectId, authorId: UserId, content: String): Post =
+    new Post(new ObjectId(), topicId, authorId, content)
+}
 
 case class Topic(id: ObjectId,
                  title: String,
