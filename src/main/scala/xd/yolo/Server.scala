@@ -32,9 +32,9 @@ class MainConfig {
 
   @Bean def database: MongoDatabase = mongoClient.getDatabase("mydb")
 
-  @Bean def topicService: TopicService = new MongoTopicService(MongoTopicService.getCollection(database))
+  @Bean def topicService: TopicService = new MongoTopicService(database)
 
-  @Bean def postService: PostService = new MongoPostService(MongoPostService.getCollection(database))
+  @Bean def postService: PostService = new MongoPostService(database)
 
 }
 

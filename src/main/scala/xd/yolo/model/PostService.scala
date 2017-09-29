@@ -1,10 +1,11 @@
 package xd.yolo.model
 
-import com.avsystem.commons.mongo.{BsonCodec, Doc, DocumentCodec, Filter}
-import com.avsystem.commons.mongo.sync.MongoOps
-import com.mongodb.client.{MongoCollection, MongoDatabase}
-import org.bson.types.ObjectId
 import com.avsystem.commons.jiop.JavaInterop._
+import com.avsystem.commons.mongo.BsonRef.Creator
+import com.avsystem.commons.mongo.sync.GenCodecCollection
+import com.avsystem.commons.serialization.GenCodec
+import com.mongodb.client.MongoDatabase
+import org.bson.types.ObjectId
 
 trait PostService {
 
@@ -14,44 +15,25 @@ trait PostService {
 
 }
 
-class MongoPostService(collection: MongoCollection[Post]) extends PostService {
+class MongoPostService(db: MongoDatabase) extends PostService with Creator[Post] {
+  import com.avsystem.commons.mongo.core.ops.Filtering._
+  import com.avsystem.commons.mongo.BsonGenCodecs._
 
-  import MongoPostService._
+  implicit val codec: GenCodec[Post] = GenCodec.materializeRecursively[Post]
+  private val collection = GenCodecCollection.create[Post](db, "post")
+
+  private val topicIdRef = ref(_.topicId)
+  private val idRef = ref(_.id)
 
   override def getAllForTopic(topicId: ObjectId): Seq[Post] = {
-    collection.find(Filter.equal(topicIdKey, topicId)).iterator().asScala.toSeq
+    collection.find(topicIdRef equal topicId).iterator().asScala.toSeq
   }
 
   override def getById(id: ObjectId): Post = {
-    collection.find(Filter.equal(idKey, id)).first()
+    collection.find(idRef equal id).first()
   }
 
   override def save(post: Post): Unit = {
     collection.insertOne(post)
-  }
-}
-object MongoPostService extends MongoOps {
-
-  private val idKey = BsonCodec.objectId.key("_id")
-  private val topicIdKey = BsonCodec.objectId.key("topicId")
-  private val authorKey = BsonCodec.string.key("authorId")
-  private val contentKey = BsonCodec.string.key("content")
-
-  def getCollection(db: MongoDatabase): MongoCollection[Post] = {
-    dbOps(db).getCollection[Post]("post", codec.bsonCodec)
-  }
-
-  private val codec = new DocumentCodec[Post] {
-    override def toDocument(t: Post): Doc = Doc()
-      .put(idKey, t.id)
-      .put(topicIdKey, t.topicId)
-      .put(authorKey, t.authorId.id)
-      .put(contentKey, t.content)
-
-    override def fromDocument(doc: Doc): Post = Post(
-      doc.require(idKey),
-      doc.require(topicIdKey),
-      UserId(doc.require(authorKey)),
-      doc.require(contentKey))
   }
 }

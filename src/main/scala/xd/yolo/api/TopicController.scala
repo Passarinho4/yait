@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation._
 import xd.yolo.api.TopicController.TopicRequest
-import xd.yolo.model.{Topic, TopicService, UserId}
+import xd.yolo.model._
 
 import scala.language.postfixOps
 
@@ -18,11 +18,18 @@ class TopicController extends LazyLogging {
   var service: TopicService = _
 
   @GetMapping(Array("topics"))
-  def topics() = service.getAll
+  def topics() = {
+    service.getAll
+  }
 
   @GetMapping(Array("topics/{id}"))
   def topic(@PathVariable id: String): Topic = {
     service.getById(new ObjectId(id))
+  }
+
+  @GetMapping(Array("topics/active"))
+  def activeTopics(): Seq[Topic] = {
+    service.getAllActive
   }
 
   @PostMapping(path = Array("topics"), produces = Array(MediaType.APPLICATION_JSON_VALUE))

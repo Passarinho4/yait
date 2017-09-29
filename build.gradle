@@ -19,7 +19,7 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-web:2.0.0.M4"
     compile group: 'com.fasterxml.jackson.module', name: 'jackson-module-scala_2.12', version: '2.9.1'
     compile group: 'joda-time', name: 'joda-time', version: '2.9.9'
-    compile 'com.avsystem.commons:commons-shared_2.12:1.22.5'
+    compile 'com.avsystem.commons:commons-shared_2.12:1.22.7'
     compile 'com.typesafe.scala-logging:scala-logging_2.12:3.7.2'
     compile 'org.scala-lang.modules:scala-java8-compat_2.12:0.8.0'
     compile 'com.avsystem.commons:commons-mongo_2.12:1.22.5'
