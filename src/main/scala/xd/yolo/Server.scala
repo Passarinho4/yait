@@ -36,5 +36,6 @@ class MainConfig {
 
   @Bean def postService: PostService = new MongoPostService(database)
 
+  @Bean def tokenService: TokenService = new MongoTokenService(database)
 }
 

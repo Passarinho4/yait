@@ -15,9 +15,8 @@ trait PostService {
 
 }
 
-class MongoPostService(db: MongoDatabase) extends PostService with Creator[Post] {
+class MongoPostService(db: MongoDatabase) extends PostService with Creator[Post] with BasicCodecs {
   import com.avsystem.commons.mongo.core.ops.Filtering._
-  import com.avsystem.commons.mongo.BsonGenCodecs._
 
   implicit val codec: GenCodec[Post] = GenCodec.materializeRecursively[Post]
   private val collection = GenCodecCollection.create[Post](db, "post")
