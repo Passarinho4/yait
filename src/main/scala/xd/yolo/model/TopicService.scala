@@ -13,7 +13,7 @@ trait TopicService {
   def getAllActive: Seq[Topic]
 
   def getById(id: ObjectId): Option[Topic]
-  def save(topic: Topic): Unit
+  def save(topic: Topic): ObjectId
 }
 
 class MongoTopicService(db: MongoDatabase) extends TopicService with Creator[Topic] with BasicCodecs {
@@ -36,7 +36,8 @@ class MongoTopicService(db: MongoDatabase) extends TopicService with Creator[Top
     Option(collection.find(idRef equal id).first())
   }
 
-  override def save(topic: Topic): Unit = {
+  override def save(topic: Topic): ObjectId = {
     collection.replaceOne(idRef equal topic.id, topic, updateOpt)
+    topic.id
   }
 }

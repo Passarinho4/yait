@@ -33,9 +33,9 @@ class TopicController extends LazyLogging {
     service.getAllActive
   }
 
-  @PostMapping(path = Array("topics"), produces = Array(MediaType.APPLICATION_JSON_VALUE))
-  def topic(@RequestBody topicRequest: TopicRequest) = {
-    service.save(Topic(topicRequest.title, topicRequest.description, UserId(topicRequest.authorId)))
+  @PostMapping(path = Array("topics"), produces = Array(MediaType.TEXT_PLAIN_VALUE))
+  def topic(@RequestBody topicRequest: TopicRequest): String = {
+    service.save(Topic(topicRequest.title, topicRequest.description, UserId(topicRequest.authorId))).toHexString
   }
 
   @PostMapping(Array("topics/{id}"))
