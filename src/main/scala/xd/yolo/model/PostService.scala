@@ -11,7 +11,7 @@ trait PostService {
 
   def getAllForTopic(topicId: ObjectId): Seq[Post]
   def getById(id: ObjectId): Post
-  def save(post: Post): Unit
+  def save(post: Post): ObjectId
 
 }
 
@@ -32,7 +32,8 @@ class MongoPostService(db: MongoDatabase) extends PostService with Creator[Post]
     collection.find(idRef equal id).first()
   }
 
-  override def save(post: Post): Unit = {
+  override def save(post: Post): ObjectId = {
     collection.insertOne(post)
+    post.id
   }
 }
