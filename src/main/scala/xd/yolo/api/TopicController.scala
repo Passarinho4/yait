@@ -5,7 +5,7 @@ import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation._
-import xd.yolo.api.TopicController.{TopicRequest, VoteRequest}
+import xd.yolo.api.TopicController.{TopicRequest, TopicResponse, VoteRequest}
 import xd.yolo.model._
 
 import scala.language.postfixOps
@@ -19,18 +19,18 @@ class TopicController extends LazyLogging {
   @Autowired var tokenService: TokenService = _
 
   @GetMapping(Array("topics"))
-  def topics() = {
-    service.getAll
+  def topics(): Seq[TopicResponse] = {
+    service.getAll.map(TopicResponse.fromTopic)
   }
 
   @GetMapping(Array("topics/{id}"))
-  def topic(@PathVariable id: String): Topic = {
-    service.getById(new ObjectId(id)).orNull
+  def topic(@PathVariable id: String): TopicResponse = {
+    service.getById(new ObjectId(id)).map(TopicResponse.fromTopic).orNull
   }
 
   @GetMapping(Array("topics/active"))
-  def activeTopics(): Seq[Topic] = {
-    service.getAllActive
+  def activeTopics(): Seq[TopicResponse] = {
+    service.getAllActive.map(TopicResponse.fromTopic)
   }
 
   @PostMapping(path = Array("topics"), produces = Array(MediaType.TEXT_PLAIN_VALUE))
@@ -54,6 +54,14 @@ class TopicController extends LazyLogging {
 object TopicController {
 
   case class TopicRequest(title: String, description: String, authorId: String)
-
   case class VoteRequest(token: String)
+
+  case class TopicResponse(id: String, title: String, description: String, authorId: String)
+
+  object TopicResponse {
+    def fromTopic(topic: Topic): TopicResponse = {
+      TopicResponse(topic.id.toHexString, topic.title, topic.description, topic.authorId.id)
+    }
+  }
+
 }
