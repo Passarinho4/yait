@@ -34,9 +34,9 @@ class TopicController extends LazyLogging {
     service.getAll(Opened).map(TopicResponse.fromTopic)
   }
 
-  @GetMapping(Array("topics/closed"))
+  @GetMapping(Array("topics/opened"))
   def openedTopics(): Seq[TopicResponse] = {
-    service.getAll(Closed).map(TopicResponse.fromTopic)
+    service.getAll(Opened).map(TopicResponse.fromTopic)
   }
 
   @GetMapping(Array("topics/wontfix"))
