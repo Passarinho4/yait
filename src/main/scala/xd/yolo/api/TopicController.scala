@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation._
 import xd.yolo.api.TopicController.{TopicRequest, TopicResponse, VoteRequest}
+import xd.yolo.model.State.{Closed, Opened, WontFix}
 import xd.yolo.model._
 
 import scala.language.postfixOps
@@ -30,8 +31,24 @@ class TopicController extends LazyLogging {
 
   @GetMapping(Array("topics/active"))
   def activeTopics(): Seq[TopicResponse] = {
-    service.getAllActive.map(TopicResponse.fromTopic)
+    service.getAll(Opened).map(TopicResponse.fromTopic)
   }
+
+  @GetMapping(Array("topics/closed"))
+  def openedTopics(): Seq[TopicResponse] = {
+    service.getAll(Closed).map(TopicResponse.fromTopic)
+  }
+
+  @GetMapping(Array("topics/wontfix"))
+  def wontfixTopics(): Seq[TopicResponse] = {
+    service.getAll(WontFix).map(TopicResponse.fromTopic)
+  }
+
+  @GetMapping(Array("topics/closed"))
+  def closedTopics(): Seq[TopicResponse] = {
+    service.getAll(Closed).map(TopicResponse.fromTopic)
+  }
+
 
   @PostMapping(path = Array("topics"), produces = Array(MediaType.TEXT_PLAIN_VALUE))
   def topic(@RequestBody topicRequest: TopicRequest): String = {
@@ -49,6 +66,23 @@ class TopicController extends LazyLogging {
       tokenService.save(newToken)
     }
   }
+
+  @PostMapping(Array("topics/{id}/open"))
+  def openTopic(@PathVariable id: String): Unit = {
+    service.openTopic(new ObjectId(id))
+  }
+
+  @PostMapping(Array("topics/{id}/wontfix"))
+  def wontFixTopic(@PathVariable id: String): Unit = {
+    service.wontFixTopic(new ObjectId(id))
+  }
+
+  @PostMapping(Array("topics/{id}/close"))
+  def closeTopic(@PathVariable id: String): Unit = {
+    service.closeTopic(new ObjectId(id))
+  }
+
+
 }
 
 object TopicController {

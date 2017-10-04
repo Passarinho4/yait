@@ -5,7 +5,7 @@ import java.util.UUID
 import com.avsystem.commons.misc.{NamedEnum, NamedEnumCompanion}
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
-import xd.yolo.model.State.{Created, Open}
+import xd.yolo.model.State.Opened
 
 case class UserId(id: String)
 
@@ -20,8 +20,11 @@ object Post {
 sealed abstract class State(override val name: String) extends NamedEnum
 object State extends NamedEnumCompanion[State] {
 
-  case object Created extends State("Created")
-  case object Open extends State("Open")
+  case object Opened extends State("Opened")
+
+  case object WorkInProgress extends State("WorkInProgress")
+
+  case object WontFix extends State("WontFix")
   case object Closed extends State("Closed")
 
   override val values: List[State] = caseObjects
@@ -37,7 +40,7 @@ case class Topic(id: ObjectId,
                  creationDate: DateTime)
 object Topic {
   def apply(title: String, description: String, authorId: UserId): Topic = {
-    Topic(new ObjectId(), title, Created, description, authorId, List(), commentsAllowed = false, new DateTime())
+    Topic(new ObjectId(), title, Opened, description, authorId, List(), commentsAllowed = false, new DateTime())
   }
 }
 
@@ -47,7 +50,7 @@ case class Token(id: ObjectId, token: String, userId: Option[UserId], mail: Opti
   def voteFor(topic: Topic): (Token, Topic) = {
     if (!canVote()) throw new IllegalStateException(s"Token $token is outdated or doesn't have enough points.")
     if (topic.votes.contains(id)) throw new IllegalArgumentException(s"Token $token voted for ${topic.id}.")
-    if (topic.state != Open) throw new IllegalArgumentException(s"$Topic {topic.id} isn't open for voting.")
+    if (topic.state != Opened) throw new IllegalArgumentException(s"$Topic {topic.id} isn't open for voting.")
 
     val newTopic = topic.copy(votes = id :: topic.votes)
     val newToken = copy(votesLeft = votesLeft - 1)
