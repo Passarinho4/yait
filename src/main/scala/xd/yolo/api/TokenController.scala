@@ -3,7 +3,7 @@ package xd.yolo.api
 import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation._
-import xd.yolo.api.TokenController.{GenerateForMailsRequest, GenerateForUsersRequest}
+import xd.yolo.api.TokenController.{GenerateForMailsRequest, GenerateForUsersRequest, TokenResponse}
 import xd.yolo.model.{Token, TokenService, UserId}
 
 @RestController
@@ -30,14 +30,23 @@ class TokenController {
   }
 
   @GetMapping(Array("/tokens/{token}"))
-  def token(@PathVariable token: String): Token = {
-    service.findByToken(token).orNull
+  def token(@PathVariable token: String): TokenResponse = {
+    service.findByToken(token).map(TokenResponse.fromToken).orNull
   }
 
 
 }
 
 object TokenController {
+
+  case class TokenResponse(id: String, token: String, userId: Option[UserId], mail: Option[String],
+                          creationDate: DateTime, validUntil: DateTime, votesLeft: Int)
+
+  object TokenResponse {
+    def fromToken(token: Token): TokenResponse = {
+      TokenResponse(token.id.toHexString, token.token, token.userId, token.mail, token.creationDate, token.validUntil, token.votesLeft)
+    }
+  }
 
   case class GenerateForUsersRequest(userIds: List[String], validUntil: Long, votes: Int)
 
