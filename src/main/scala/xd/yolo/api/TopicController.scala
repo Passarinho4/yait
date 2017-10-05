@@ -59,7 +59,7 @@ class TopicController extends LazyLogging {
   def voteForTopic(@RequestBody voteRequest: VoteRequest, @PathVariable id: String) = {
     for {
       topic <- service.getById(new ObjectId(id))
-      token <- tokenService.findByToken(voteRequest.token)
+      token <- tokenService.findByToken(voteRequest.token) //Should handle invalid tokens and returns error not 200.
     } {
       val (newToken, newTopic) = token.voteFor(topic)
       service.save(newTopic)
@@ -81,7 +81,6 @@ class TopicController extends LazyLogging {
   def closeTopic(@PathVariable id: String): Unit = {
     service.closeTopic(new ObjectId(id))
   }
-
 
 }
 
