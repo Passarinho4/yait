@@ -27,7 +27,7 @@ class SpringSecurityConfig extends WebSecurityConfigurerAdapter(true) {
       .antMatchers(POST, "/topics/{id:[a-z\\d]+}/close").hasAuthority("Admin")
       .antMatchers(POST, "/topics").hasAnyAuthority("Admin", "Member")
       .antMatchers(POST, "/topics/{id:[a-z\\d]+}/posts").hasAnyAuthority("Admin", "Member")
-      .antMatchers(GET, "/topics/{id:[a-z\\d]+}").hasAnyAuthority("Admin", "Member")
+      .antMatchers(GET, "/topics/{id:[a-z\\d]+}").permitAll()
       .antMatchers(GET, "/topics").permitAll()
       .antMatchers(GET, "/topics/{id:[a-z\\d]+}/posts").permitAll()
       .antMatchers(GET, "/login/credentials").permitAll().and()
