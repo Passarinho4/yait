@@ -1,4 +1,4 @@
-package xd.yolo
+package xd.yolo.security
 
 import javax.servlet.FilterChain
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}

@@ -24,6 +24,8 @@ dependencies {
     compile 'org.scala-lang.modules:scala-java8-compat_2.12:0.8.0'
     compile 'com.avsystem.commons:commons-mongo_2.12:1.22.5'
     compile 'org.mongodb:mongo-java-driver:3.6.0-beta1'
+    compile 'org.springframework.boot:spring-boot-starter-security:2.0.0.M4'
+    compile 'io.jsonwebtoken:jjwt:0.8.0'
     //compile 'org.springframework.boot:spring-boot-starter-data-ldap:1.5.7.RELEASE'
 
 
