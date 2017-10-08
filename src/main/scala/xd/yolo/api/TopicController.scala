@@ -89,11 +89,11 @@ object TopicController {
   case class TopicRequest(title: String, description: String, authorId: String)
   case class VoteRequest(token: String)
 
-  case class TopicResponse(id: String, title: String, description: String, authorId: String, votes: List[String])
+  case class TopicResponse(id: String, title: String, description: String, authorId: String, votes: List[String], state: String)
 
   object TopicResponse {
     def fromTopic(topic: Topic): TopicResponse = {
-      TopicResponse(topic.id.toHexString, topic.title, topic.description, topic.authorId.id, topic.votes.map(_.toHexString))
+      TopicResponse(topic.id.toHexString, topic.title, topic.description, topic.authorId.id, topic.votes.map(_.toHexString), topic.state.name)
     }
   }
 

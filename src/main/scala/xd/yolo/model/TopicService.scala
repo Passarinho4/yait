@@ -6,7 +6,7 @@ import com.avsystem.commons.mongo.sync.GenCodecCollection
 import com.avsystem.commons.serialization.GenCodec
 import com.mongodb.client.MongoDatabase
 import org.bson.types.ObjectId
-import xd.yolo.model.State.{Closed, Opened, WontFix}
+import xd.yolo.model.State.{Closed, Opened, WontFix, WorkInProgress}
 
 trait TopicService {
 
@@ -52,7 +52,7 @@ class MongoTopicService(db: MongoDatabase) extends TopicService with Creator[Top
   }
 
   override def openTopic(id: ObjectId): Unit = {
-    collection.updateOne(idRef equal id, stateRef set Opened)
+    collection.updateOne(idRef equal id, stateRef set WorkInProgress)
   }
 
   override def closeTopic(id: ObjectId): Unit = {
