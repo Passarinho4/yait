@@ -49,7 +49,6 @@ case class Token(id: ObjectId, token: String, userId: Option[UserId], mail: Opti
 
   def voteFor(topic: Topic): (Token, Topic) = {
     if (!canVote()) throw new IllegalStateException(s"Token $token is outdated or doesn't have enough points.")
-    if (topic.votes.contains(id)) throw new IllegalArgumentException(s"Token $token voted for ${topic.id}.")
     if (topic.state != Opened) throw new IllegalArgumentException(s"$Topic {topic.id} isn't open for voting.")
 
     val newTopic = topic.copy(votes = id :: topic.votes)
