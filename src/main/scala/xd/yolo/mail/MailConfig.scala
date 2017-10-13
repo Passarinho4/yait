@@ -4,6 +4,7 @@ import java.util.Properties
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.mail.MailSender
 import org.springframework.mail.javamail.JavaMailSenderImpl
 
 @Configuration
@@ -24,7 +25,7 @@ class MailConfig {
 
 
   @Bean
-  def mailSender: Nothing = {
+  def mailSender: MailSender = {
     val sender = new JavaMailSenderImpl()
     val properties = properties
     sender.setHost(host)
