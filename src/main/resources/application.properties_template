@@ -5,4 +5,9 @@ ldap.groupsDn = ""
 ldap.user = ""
 ldap.password = ""
 ldap.timeout = ""
-
+mail.host = ""
+mail.password = ""
+mail.encoding = ""
+mail.username = ""
+mail.protocol = ""
+mail.port =
