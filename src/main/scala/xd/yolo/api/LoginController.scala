@@ -28,6 +28,11 @@ class LoginController {
           token <- generate(loginPassword.login, userType, secret)
     } yield token).get
   }
+
+  @GetMapping(Array("/healthCheck"))
+  def healthCheck(): String = {
+    "OK"
+  }
 }
 
 object LoginController {

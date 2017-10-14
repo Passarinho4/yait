@@ -2,11 +2,12 @@ package xd.yolo.ldap
 
 import com.avsystem.commons.jiop.JavaInterop._
 import org.springframework.beans.factory.annotation.{Qualifier, Value}
-import org.springframework.context.annotation.{Bean, Configuration}
+import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
 import org.springframework.ldap.core.LdapTemplate
 import org.springframework.ldap.core.support.LdapContextSource
 
 @Configuration
+@ComponentScan(basePackages = Array("xd.yolo"))
 class LdapConfig {
 
   @Value("${ldap.url}") private var ldapUrl: String = _
@@ -17,11 +18,11 @@ class LdapConfig {
   @Value("${ldap.timeout}") private var ldapTimeout: String = _
 
   @Bean
-  @Qualifier
+  @Qualifier("usersContext")
   def usersContextSource(): LdapContextSource = getContextSourceWithBase(ldapUsersDn)
 
   @Bean
-  @Qualifier
+  @Qualifier("groupsContext")
   def groupsContextSource(): LdapContextSource = getContextSourceWithBase(ldapGroupsDn)
 
   @Bean

@@ -10,24 +10,23 @@ import org.springframework.mail.javamail.JavaMailSenderImpl
 @Configuration
 class MailConfig {
 
-  @Value("{mail.host}")
+  @Value("${mail.host}")
   private var host: String = _
-  @Value("{mail.password}")
+  @Value("${mail.password}")
   private var password: String = _
-  @Value("{mail.encoding}")
+  @Value("${mail.encoding}")
   private var encoding: String = _
-  @Value("{mail.username}")
+  @Value("${mail.username}")
   private var username: String = _
-  @Value("{mail.protocol}")
+  @Value("${mail.protocol}")
   private var protocol: String = _
-  @Value("{mail.port}")
+  @Value("${mail.port}")
   private var port: String = _
 
 
   @Bean
   def mailSender: MailSender = {
     val sender = new JavaMailSenderImpl()
-    val properties = properties
     sender.setHost(host)
     sender.setPassword(password)
     sender.setDefaultEncoding(encoding)

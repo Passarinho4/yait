@@ -21,7 +21,7 @@ class LdapHandler @Autowired()(template: LdapTemplate,
     Try {
       val andFilter = new AndFilter()
       andFilter.and(new EqualsFilter("objectclass", "posixAccount"))
-      andFilter.and(new EqualsFilter("uid", "login"))
+      andFilter.and(new EqualsFilter("uid", user))
       template.authenticate("", andFilter.encode(), passwd)
     }
   }
