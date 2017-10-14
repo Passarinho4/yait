@@ -45,7 +45,7 @@ class MainConfig {
       new MongoClient(JList(new ServerAddress(host)),
         JList(MongoCredential.createCredential(username, authDatabase, password.toCharArray)))
     } else {
-      new MongoClient()
+      new MongoClient(host)
     }
 
   @Bean def database: MongoDatabase = mongoClient.getDatabase("mydb")
