@@ -34,9 +34,7 @@ class MailConfig {
     sender.setProtocol(protocol)
     sender.setPort(port.toInt)
     val props = new Properties()
-    props.setProperty("mail.smtps.auth", "true")
-    props.setProperty("mail.smtp.ssl.enable", "true")
-    props.setProperty("mail.transport.protocol", "true")
+    props.setProperty("mail.smtp.auth", "true")
     props.setProperty("mail.smtp.starttls.enable", "true")
     sender.setJavaMailProperties(props)
     sender
