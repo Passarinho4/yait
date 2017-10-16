@@ -33,6 +33,11 @@ class LoginController {
   def healthCheck(): String = {
     "OK"
   }
+
+  @GetMapping(Array("/groups"))
+  def getGroups(): GroupsResponse = {
+    GroupsResponse(service.getGroups())
+  }
 }
 
 object LoginController {
@@ -40,6 +45,8 @@ object LoginController {
   case class Token(token: String)
 
   case class LoginPassword(login: String, password: String)
+
+  case class GroupsResponse(groups: List[String])
 
   def decodeUserFromCredentials(header: String): Try[LoginPassword] = {
     for {

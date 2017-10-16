@@ -10,9 +10,9 @@ import scala.util.Try
 
 @Service
 class UserService @Autowired()(ldapFacade: LdapFacade) {
-
   @Value("${yait.admin}")
   val adminLogin: String = null
+
 
   def loginTry(loginPassword: LoginController.LoginPassword): Try[UserType] = {
     for (result <- ldapFacade.auth(loginPassword.login, loginPassword.password)) yield {
@@ -25,13 +25,14 @@ class UserService @Autowired()(ldapFacade: LdapFacade) {
   }
 
   def getUserTypeForUser(login: String): UserType = {
-    println(s"LOOOOGIN: $login, ADMIN LOGIN: $adminLogin")
     if (login == adminLogin) {
       UserType.Admin
     } else {
       UserType.Member
     }
   }
+
+  def getGroups() = ldapFacade.getGroups()
 }
 
 object UserService {
