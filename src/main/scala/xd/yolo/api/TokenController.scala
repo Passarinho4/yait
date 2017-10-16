@@ -4,7 +4,7 @@ import org.joda.time.DateTime
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.mail.{MailSender, SimpleMailMessage}
 import org.springframework.web.bind.annotation._
-import xd.yolo.api.TokenController.{GenerateForMailsRequest, GenerateForUsersRequest, TokenResponse}
+import xd.yolo.api.TokenController.{GenerateForGroupsRequest, GenerateForMailsRequest, GenerateForUsersRequest, TokenResponse}
 import xd.yolo.ldap.LdapFacade
 import xd.yolo.model.{Token, TokenService, UserId}
 
@@ -37,6 +37,19 @@ class TokenController {
     tokens.foreach(token => {
       val message = createMail(token)
       mailSender.send(message)
+    })
+  }
+
+  @PostMapping(Array("/tokens/groups"))
+  def generateTokens(@RequestBody request: GenerateForGroupsRequest): Unit = {
+    val validUntil = new DateTime(request.validUntil)
+    val ids = request.groups.flatMap(g => ldapFacade.getUserDataByUserGroup(g))
+      .filter(_.mail.isDefined)
+      .map(e => (UserId(e.id), e.mail.get))
+    val tokens = Token.generateForUsers(validUntil, request.votes, ids)
+    service.insertAll(tokens)
+    tokens.foreach(token => {
+      mailSender.send(createMail(token))
     })
   }
 
@@ -73,5 +86,7 @@ object TokenController {
   case class GenerateForUsersRequest(userIds: List[String], validUntil: Long, votes: Int)
 
   case class GenerateForMailsRequest(mails: List[String], validUntil: Long, votes: Int)
+
+  case class GenerateForGroupsRequest(groups: List[String], validUntil: Long, votes: Int)
 
 }
