@@ -25,6 +25,7 @@ class UserService @Autowired()(ldapFacade: LdapFacade) {
   }
 
   def getUserTypeForUser(login: String): UserType = {
+    println(s"LOOOOGIN: $login, ADMIN LOGIN: $adminLogin")
     if (login == adminLogin) {
       UserType.Admin
     } else {
