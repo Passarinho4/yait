@@ -27,11 +27,13 @@ class PostController {
 
 object PostController {
   case class PostRequest(authorId: String, content: String)
-  case class PostResponse(id: String, topicId: String, authorId: String, content: String)
+
+  case class PostResponse(id: String, topicId: String, authorId: String, content: String, creationDate: Long)
 
   object PostResponse {
     def fromPost(post: Post): PostResponse = {
-      PostResponse(post.id.toHexString, post.topicId.toHexString, post.authorId.id, post.content)
+      PostResponse(post.id.toHexString, post.topicId.toHexString,
+        post.authorId.id, post.content, post.creationDate.getMillis)
     }
   }
 

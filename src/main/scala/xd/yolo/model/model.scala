@@ -10,11 +10,11 @@ import xd.yolo.model.State.Opened
 case class UserId(id: String)
 
 
-case class Post(id: ObjectId, topicId: ObjectId, authorId: UserId, content: String)
+case class Post(id: ObjectId, topicId: ObjectId, authorId: UserId, content: String, creationDate: DateTime)
 
 object Post {
   def apply(topicId: ObjectId, authorId: UserId, content: String): Post =
-    new Post(new ObjectId(), topicId, authorId, content)
+    new Post(new ObjectId(), topicId, authorId, content, new DateTime())
 }
 
 sealed abstract class State(override val name: String) extends NamedEnum
