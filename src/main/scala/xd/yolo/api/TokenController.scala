@@ -1,7 +1,7 @@
 package xd.yolo.api
 
 import org.joda.time.DateTime
-import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.{Autowired, Value}
 import org.springframework.mail.{MailSender, SimpleMailMessage}
 import org.springframework.web.bind.annotation._
 import xd.yolo.api.TokenController.{GenerateForGroupsRequest, GenerateForMailsRequest, GenerateForUsersRequest, TokenResponse}
@@ -11,6 +11,8 @@ import xd.yolo.model.{Token, TokenService, UserId}
 @RestController
 class TokenController {
 
+  @Value("${yait.address}")
+  private var address: String = _
   @Autowired
   private var service: TokenService = _
   @Autowired
@@ -22,7 +24,7 @@ class TokenController {
     val message = new SimpleMailMessage()
     message.setTo(token.mail)
     message.setSubject("YAIT Token")
-    message.setText(s"Now you can vote here: ${token.token}")
+    message.setText(s"Now you can vote here: $address/token/${token.token}/topicList")
     message
   }
 

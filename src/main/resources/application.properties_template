@@ -15,3 +15,5 @@ mongo.username =
 mongo.password =
 mongo.authDatabase =
 mongo.host =
+yait.admin =
+yait.address =
