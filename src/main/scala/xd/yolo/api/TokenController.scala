@@ -20,9 +20,9 @@ class TokenController {
   @Autowired
   private var ldapFacade: LdapFacade = _
 
-  def createMail(token: Token): SimpleMailMessage = {
+  def createMail(mail: String, token: Token): SimpleMailMessage = {
     val message = new SimpleMailMessage()
-    message.setTo(token.mail)
+    message.setTo(mail)
     message.setSubject("YAIT Token")
     message.setText(s"Now you can vote here: $address/token/${token.token}/topicList")
     message
@@ -34,10 +34,10 @@ class TokenController {
     val ids = ldapFacade.getUserDataByIds(request.userIds)
       .filter(_.mail.isDefined)
       .map(e => (UserId(e.id), e.mail.get))
-    val tokens = Token.generateForUsers(validUntil, request.votes, ids)
-    service.insertAll(tokens)
-    tokens.foreach(token => {
-      val message = createMail(token)
+    val tokensMap = Token.generateForUsers(validUntil, request.votes, ids)
+    service.insertAll(tokensMap.values.toSeq)
+    tokensMap.foreach(token => {
+      val message = createMail(token._1, token._2)
       mailSender.send(message)
     })
   }
@@ -48,20 +48,20 @@ class TokenController {
     val ids = request.groups.flatMap(g => ldapFacade.getUserDataByUserGroup(g))
       .filter(_.mail.isDefined)
       .map(e => (UserId(e.id), e.mail.get))
-    val tokens = Token.generateForUsers(validUntil, request.votes, ids)
-    service.insertAll(tokens)
-    tokens.foreach(token => {
-      mailSender.send(createMail(token))
+    val tokensMap = Token.generateForUsers(validUntil, request.votes, ids)
+    service.insertAll(tokensMap.values.toSeq)
+    tokensMap.foreach(token => {
+      mailSender.send(createMail(token._1, token._2))
     })
   }
 
   @PostMapping(Array("/tokens/mails"))
   def generateTokens(@RequestBody request: GenerateForMailsRequest): Unit = {
     val validUntil = new DateTime(request.validUntil)
-    val tokens = Token.generateForMails(validUntil, request.votes, request.mails)
-    service.insertAll(tokens)
-    tokens.foreach(token => {
-      val message = createMail(token)
+    val tokensMap = Token.generateForMails(validUntil, request.votes, request.mails)
+    service.insertAll(tokensMap.values.toSeq)
+    tokensMap.foreach(token => {
+      val message = createMail(token._1, token._2)
       mailSender.send(message)
     })
   }
@@ -76,12 +76,12 @@ class TokenController {
 
 object TokenController {
 
-  case class TokenResponse(id: String, token: String, userId: Option[UserId], mail: String,
+  case class TokenResponse(id: String, token: String, userId: Option[UserId],
                            creationDate: DateTime, validUntil: DateTime, votesLeft: Int)
 
   object TokenResponse {
     def fromToken(token: Token): TokenResponse = {
-      TokenResponse(token.id.toHexString, token.token, token.userId, token.mail, token.creationDate, token.validUntil, token.votesLeft)
+      TokenResponse(token.id.toHexString, token.token, token.userId, token.creationDate, token.validUntil, token.votesLeft)
     }
   }
 

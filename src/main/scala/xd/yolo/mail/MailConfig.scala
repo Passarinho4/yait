@@ -22,7 +22,10 @@ class MailConfig {
   private var protocol: String = _
   @Value("${mail.port}")
   private var port: String = _
-
+  @Value("${mail.smtp.auth}")
+  private var auth: String = _
+  @Value("${mail.smtp.starttls.enable}")
+  private var startTlsEnable: String = _
 
   @Bean
   def mailSender: MailSender = {
@@ -34,8 +37,8 @@ class MailConfig {
     sender.setProtocol(protocol)
     sender.setPort(port.toInt)
     val props = new Properties()
-    props.setProperty("mail.smtp.auth", "true")
-    props.setProperty("mail.smtp.starttls.enable", "true")
+    props.setProperty("mail.smtp.auth", auth)
+    props.setProperty("mail.smtp.starttls.enable", startTlsEnable)
     sender.setJavaMailProperties(props)
     sender
   }

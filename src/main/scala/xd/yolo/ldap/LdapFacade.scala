@@ -28,7 +28,7 @@ class LdapFacade @Autowired()(ldapHandler: LdapHandler, userDataCache: UserDataC
   }
 
   def getGroups(): List[String] = {
-    ldapHandler.getGroups()
+    ldapHandler.getGroupsNames()
   }
 
   def getUserDataByLogin(login: String): Option[UserData] = {

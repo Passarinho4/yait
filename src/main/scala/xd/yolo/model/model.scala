@@ -44,7 +44,7 @@ object Topic {
   }
 }
 
-case class Token(id: ObjectId, token: String, userId: Option[UserId], mail: String,
+case class Token(id: ObjectId, token: String, userId: Option[UserId],
                  creationDate: DateTime, validUntil: DateTime, votesLeft: Int) {
 
   def voteFor(topic: Topic): (Token, Topic) = {
@@ -64,15 +64,15 @@ case class Token(id: ObjectId, token: String, userId: Option[UserId], mail: Stri
 
 object Token {
 
-  def apply(validUntil: DateTime, votes: Int, userId: UserId, mail: String): Token =
-    new Token(new ObjectId(), UUID.randomUUID().toString, Some(userId), mail, new DateTime(), validUntil, votes)
+  def apply(validUntil: DateTime, votes: Int, userId: UserId): Token =
+    new Token(new ObjectId(), UUID.randomUUID().toString, Some(userId), new DateTime(), validUntil, votes)
 
-  def generateForUsers(validUntil: DateTime, votes: Int, users: Seq[(UserId, String)]): Seq[Token] =
-    users.map(e => Token(validUntil, votes, e._1, e._2))
+  def generateForUsers(validUntil: DateTime, votes: Int, users: Seq[(UserId, String)]): Map[String, Token] =
+    users.map(e => (e._2, Token(validUntil, votes, e._1))).toMap
 
-  def apply(validUntil: DateTime, votes: Int, mail: String): Token =
-    new Token(new ObjectId(), UUID.randomUUID().toString, None, mail, new DateTime(), validUntil, votes)
+  def apply(validUntil: DateTime, votes: Int): Token =
+    new Token(new ObjectId(), UUID.randomUUID().toString, None, new DateTime(), validUntil, votes)
 
-  def generateForMails(validUntil: DateTime, votes: Int, mails: Seq[String]): Seq[Token] =
-    mails.map(Token(validUntil, votes, _))
+  def generateForMails(validUntil: DateTime, votes: Int, mails: Seq[String]): Map[String, Token] =
+    mails.map(mail => (mail, Token(validUntil, votes))).toMap
 }
