@@ -13,6 +13,10 @@ class LdapFacade @Autowired()(ldapHandler: LdapHandler, userDataCache: UserDataC
     ldapHandler.auth(login, passwd)
   }
 
+  def isAdmin(login: String): Boolean = {
+    ldapHandler.isAdmin(login)
+  }
+
   def getUserDataById(id: String): Option[UserData] = {
     Option(userDataCache.getUserDataById(id))
   }

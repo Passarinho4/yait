@@ -15,12 +15,26 @@ import scala.util.Try
 class LdapHandler @Autowired()(template: LdapTemplate,
                                @Qualifier("usersContext") users: LdapContextSource,
                                @Qualifier("groupsContext") groups: LdapContextSource) {
-
   @Value("${ldap.usersFilter}")
   private var usersFilter: String = _
 
+
   @Value("${ldap.groupsFilter}")
   private var groupsFilter: String = _
+
+  @Value("${ldap.adminsGroupDn}")
+  private var adminsGroupDn: String = _
+
+  def isAdmin(login: String): Boolean = {
+    template.setContextSource(users)
+    val andFilter = new AndFilter()
+
+    andFilter.and(new HardcodedFilter(usersFilter))
+    andFilter.and(new EqualsFilter("uid", login))
+    andFilter.and(new LikeFilter("memberof", s"$adminsGroupDn"))
+    !template.search("", andFilter.encode(), SearchControls.ONELEVEL_SCOPE, new UserDataAttributesMapper())
+      .isEmpty
+  }
 
   def auth(user: String, passwd: String): Try[Boolean] = {
     template.setContextSource(users)
