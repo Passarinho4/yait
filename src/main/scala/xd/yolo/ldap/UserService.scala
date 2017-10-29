@@ -2,9 +2,7 @@ package xd.yolo.ldap
 
 import com.avsystem.commons.misc.{NamedEnum, NamedEnumCompanion}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.ResponseStatus
 import xd.yolo.api.LoginController
 import xd.yolo.ldap.UserService.{CantAuthenticateException, UserType}
 
@@ -38,7 +36,6 @@ class UserService @Autowired()(ldapFacade: LdapFacade) {
 
 object UserService {
 
-  @ResponseStatus(HttpStatus.UNAUTHORIZED)
   class CantAuthenticateException(message: String) extends RuntimeException(message)
 
   sealed abstract class UserType(val name: String) extends NamedEnum
