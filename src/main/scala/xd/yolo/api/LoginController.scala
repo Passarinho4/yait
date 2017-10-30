@@ -25,7 +25,8 @@ class LoginController {
   def login(@RequestHeader("Authorization") header: String): Token = {
     (for {loginPassword <- decodeUserFromCredentials(header)
           userType <- service.loginTry(loginPassword)
-          token <- generate(loginPassword.login, userType, secret)
+          userId <- service.getUserId(loginPassword.login)
+          token <- generate(loginPassword.login, userId, userType, secret)
     } yield token).get
   }
 
@@ -57,10 +58,11 @@ object LoginController {
     } yield LoginPassword(login, password)
   }
 
-  def generate(login: String, userType: UserType, secret: String): Try[Token] = {
+  def generate(login: String, userId: String, userType: UserType, secret: String): Try[Token] = {
     Try {
       val claims = new JHashMap[String, Object]()
       claims.put("username", login)
+      claims.put("userId", userId)
       claims.put("privileges", JList(userType.name))
 
       val jwtBuilder: JwtBuilder = Jwts.builder

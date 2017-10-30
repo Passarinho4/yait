@@ -10,6 +10,7 @@ import scala.util.Try
 
 @Service
 class UserService @Autowired()(ldapFacade: LdapFacade) {
+
   @Value("${yait.admin}")
   val adminLogin: String = null
 
@@ -21,6 +22,10 @@ class UserService @Autowired()(ldapFacade: LdapFacade) {
         throw new CantAuthenticateException(s"Can't authenticate user ${loginPassword.login}")
       }
     }
+  }
+
+  def getUserId(login: String): Try[String] = Try {
+    ldapFacade.getUserDataByLogin(login).map(_.id).get
   }
 
   def getUserTypeForUser(login: String): UserType = {
