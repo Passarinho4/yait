@@ -1,10 +1,11 @@
 package xd.yolo.ldap
 
 import com.avsystem.commons.jiop.JavaInterop._
+import com.sun.deploy.security.CertificateHostnameVerifier
 import org.springframework.beans.factory.annotation.{Qualifier, Value}
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
 import org.springframework.ldap.core.LdapTemplate
-import org.springframework.ldap.core.support.LdapContextSource
+import org.springframework.ldap.core.support.{DefaultTlsDirContextAuthenticationStrategy, LdapContextSource}
 
 @Configuration
 @ComponentScan(basePackages = Array("xd.yolo"))
@@ -36,6 +37,9 @@ class LdapConfig {
 
   private def getContextSourceWithBase(base: String) = {
     val source = new LdapContextSource
+    val strategy = new DefaultTlsDirContextAuthenticationStrategy
+    strategy.setHostnameVerifier(new CertificateHostnameVerifier)
+    source.setAuthenticationStrategy(strategy)
     source.setUrl(ldapUrl)
     source.setBase(base)
     source.setUserDn(ldapUser)
