@@ -1,7 +1,5 @@
 package xd.yolo.ldap
 
-import javax.net.ssl.SSLSession
-
 import com.avsystem.commons.jiop.JavaInterop._
 import org.springframework.beans.factory.annotation.{Qualifier, Value}
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
@@ -39,10 +37,6 @@ class LdapConfig {
   private def getContextSourceWithBase(base: String) = {
     val source = new LdapContextSource
     val strategy = new DefaultTlsDirContextAuthenticationStrategy
-    strategy.setHostnameVerifier((s: String, sslSession: SSLSession) => {
-      println(s"CERTY: $s, ${sslSession.getPeerHost}, $sslSession")
-      true
-    })
     source.setAuthenticationStrategy(strategy)
     source.setUrl(ldapUrl)
     source.setBase(base)
