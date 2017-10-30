@@ -40,7 +40,7 @@ class LdapHandler @Autowired()(template: LdapTemplate,
     template.setContextSource(users)
     Try {
       val andFilter = new AndFilter()
-      andFilter.and(new EqualsFilter("objectclass", "posixAccount"))
+      andFilter.and(new HardcodedFilter(usersFilter))
       andFilter.and(new EqualsFilter("uid", user))
       template.authenticate("", andFilter.encode(), passwd)
     }
