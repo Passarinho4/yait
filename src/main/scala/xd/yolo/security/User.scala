@@ -3,7 +3,7 @@ package xd.yolo.security
 import com.avsystem.commons.jiop.JavaInterop._
 import org.springframework.security.core.{Authentication, GrantedAuthority}
 
-case class User(username: String, privileges: List[String])
+case class User(id: String, username: String, privileges: List[String])
 
 class UserAuthentication(user: User) extends Authentication {
 

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation._
 import xd.yolo.api.TopicController.{TopicRequest, TopicResponse, VoteRequest}
 import xd.yolo.model.State.{Closed, Opened, WontFix}
 import xd.yolo.model._
+import xd.yolo.security.UserAuthentication
 
 import scala.language.postfixOps
 
@@ -51,8 +52,8 @@ class TopicController extends LazyLogging {
 
 
   @PostMapping(path = Array("topics"), produces = Array(MediaType.TEXT_PLAIN_VALUE))
-  def topic(@RequestBody topicRequest: TopicRequest): String = {
-    service.save(Topic(topicRequest.title, topicRequest.description, UserId(topicRequest.authorId))).toHexString
+  def topic(@RequestBody topicRequest: TopicRequest, authentication: UserAuthentication): String = {
+    service.save(Topic(topicRequest.title, topicRequest.description, UserId(authentication.getPrincipal.id))).toHexString
   }
 
   @PostMapping(Array("topics/{id}"))
@@ -86,7 +87,7 @@ class TopicController extends LazyLogging {
 
 object TopicController {
 
-  case class TopicRequest(title: String, description: String, authorId: String)
+  case class TopicRequest(title: String, description: String)
   case class VoteRequest(token: String)
 
   case class TopicResponse(id: String, title: String, description: String, authorId: String, votes: List[String], state: String, creationDate: Long)

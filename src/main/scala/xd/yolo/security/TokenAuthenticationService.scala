@@ -22,9 +22,10 @@ class TokenAuthenticationService(private val secret: String) {
       .parseClaimsJws(token)
       .getBody
 
+    val id = body.get("id", classOf[String])
     val username = body.get("username", classOf[String])
     val privileges = body.get("privileges", classOf[java.util.List[String]]).asScala.toList
-    User(username, privileges)
+    User(id, username, privileges)
   }
 
 }

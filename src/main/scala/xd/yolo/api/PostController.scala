@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation._
 import xd.yolo.api.PostController.{PostRequest, PostResponse}
 import xd.yolo.ldap.LdapFacade
 import xd.yolo.model.{Post, PostService, UserId}
+import xd.yolo.security.UserAuthentication
 
 @RestController
 class PostController {
@@ -28,14 +29,18 @@ class PostController {
   }
 
   @PostMapping(Array("/topics/{topicId}/posts"))
-  def topic(@PathVariable topicId: String, @RequestBody postRequest: PostRequest): String = {
-    service.save(Post(new types.ObjectId(topicId), UserId(postRequest.authorId), postRequest.content)).toHexString
+  def topic(@PathVariable topicId: String,
+            @RequestBody postRequest: PostRequest,
+            authentication: UserAuthentication): String = {
+    service.save(Post(new types.ObjectId(topicId), UserId(authentication.getPrincipal.id),
+      postRequest.content)).toHexString
   }
 
 }
 
 object PostController {
-  case class PostRequest(authorId: String, content: String)
+
+  case class PostRequest(content: String)
 
   case class PostResponse(id: String, topicId: String, authorId: String, authorLogin: String,
                           content: String, creationDate: Long)
