@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation._
 import xd.yolo.api.TopicController.{TopicRequest, TopicResponse, VoteRequest}
+import xd.yolo.ldap.LdapFacade
 import xd.yolo.model.State.{Closed, Opened, WontFix}
 import xd.yolo.model._
 import xd.yolo.security.UserAuthentication
@@ -20,6 +21,8 @@ class TopicController extends LazyLogging {
   @Autowired var service: TopicService = _
 
   @Autowired var tokenService: TokenService = _
+
+  @Autowired var ldapFacade: LdapFacade = _
 
   @GetMapping(Array("topics"))
   def topics(): Seq[TopicResponse] = {
@@ -84,6 +87,11 @@ class TopicController extends LazyLogging {
     service.closeTopic(new ObjectId(id))
   }
 
+  def fromTopic(topic: Topic): TopicResponse = {
+    val user = ldapFacade.getUserDataById(topic.authorId.id).map(_.login)
+    TopicResponse(topic.id.toHexString, topic.title, topic.description, user.getOrElse("Unknown"), topic.votes.map(_.toHexString), topic.state.name, topic.creationDate.toDate.getTime)
+  }
+
 }
 
 object TopicController {
@@ -93,11 +101,5 @@ object TopicController {
   case class VoteRequest(token: String)
 
   case class TopicResponse(id: String, title: String, description: String, authorId: String, votes: List[String], state: String, creationDate: Long)
-
-  object TopicResponse {
-    def fromTopic(topic: Topic): TopicResponse = {
-      TopicResponse(topic.id.toHexString, topic.title, topic.description, topic.authorId.id, topic.votes.map(_.toHexString), topic.state.name, topic.creationDate.toDate.getTime)
-    }
-  }
 
 }
