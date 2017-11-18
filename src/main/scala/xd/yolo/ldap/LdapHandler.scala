@@ -12,8 +12,7 @@ import org.springframework.stereotype.Component
 import scala.util.Try
 
 @Component
-class LdapHandler @Autowired()(template: LdapTemplate,
-                               @Qualifier("usersContext") users: LdapContextSource,
+class LdapHandler @Autowired()(@Qualifier("usersContext") users: LdapContextSource,
                                @Qualifier("groupsContext") groups: LdapContextSource) {
   @Value("${ldap.usersFilter}")
   private var usersFilter: String = _
@@ -26,7 +25,7 @@ class LdapHandler @Autowired()(template: LdapTemplate,
   private var adminsGroupDn: String = _
 
   def isAdmin(login: String): Boolean = {
-    template.setContextSource(users)
+    val template = new LdapTemplate(users)
     val andFilter = new AndFilter()
 
     andFilter.and(new HardcodedFilter(usersFilter))
@@ -39,7 +38,7 @@ class LdapHandler @Autowired()(template: LdapTemplate,
   }
 
   def auth(user: String, passwd: String): Try[Boolean] = {
-    template.setContextSource(users)
+    val template = new LdapTemplate(users)
     Try {
       val andFilter = new AndFilter()
       andFilter.and(new HardcodedFilter(usersFilter))
@@ -49,7 +48,7 @@ class LdapHandler @Autowired()(template: LdapTemplate,
   }
 
   def getUserData(ids: List[String], field: String): List[UserData] = {
-    template.setContextSource(users)
+    val template = new LdapTemplate(users)
     val andFilter = new AndFilter()
     val orFilter = new OrFilter()
 
@@ -70,12 +69,12 @@ class LdapHandler @Autowired()(template: LdapTemplate,
   def getUserDataByLogin(login: String): Option[UserData] = getUserDataByLogins(List(login)).headOption
 
   def getUserDataByGroupName(name: String): List[UserData] = {
-    template.setContextSource(users)
+    val template = new LdapTemplate(users)
     val andFilter = new AndFilter()
 
     andFilter.and(new HardcodedFilter(usersFilter))
     andFilter.and(new EqualsFilter("uid", "bochenek"))
-    //val groupDn: String = getGroupsNameToDn()(name)
+    val groupDn: String = getGroupsNameToDn()(name)
     andFilter.and(new LikeFilter("memberof", s"$adminsGroupDn"))
     println(s"FULL FILTER: ${andFilter.encode()}")
     val userDatas = template.search("", andFilter.encode(), SearchControls.ONELEVEL_SCOPE, new UserDataAttributesMapper())
@@ -84,7 +83,7 @@ class LdapHandler @Autowired()(template: LdapTemplate,
   }
 
   private def getGroupsNameToDn(): Map[String, String] = {
-    template.setContextSource(groups)
+    val template = new LdapTemplate(groups)
     val andFilter = new AndFilter()
     andFilter.and(new LikeFilter("objectclass", "groupOfNames"))
     andFilter.and(new HardcodedFilter(groupsFilter))
@@ -99,7 +98,7 @@ class LdapHandler @Autowired()(template: LdapTemplate,
   }
 
   def getGroupsNames(): List[String] = {
-    template.setContextSource(groups)
+    val template = new LdapTemplate(groups)
     val andFilter = new AndFilter()
     andFilter.and(new LikeFilter("objectclass", "groupOfNames"))
     andFilter.and(new HardcodedFilter(groupsFilter))
