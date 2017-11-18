@@ -71,6 +71,7 @@ class LdapHandler @Autowired()(template: LdapTemplate,
     template.setContextSource(users)
     val andFilter = new AndFilter()
     andFilter.and(new HardcodedFilter(usersFilter))
+    println(s"LOOOL ${getGroupsNameToDn()(name)}")
     andFilter.and(new LikeFilter("memberof", s"${getGroupsNameToDn()(name)}"))
     template.search("", andFilter.encode(), SearchControls.ONELEVEL_SCOPE, new UserDataAttributesMapper()).asScala.toList
   }
