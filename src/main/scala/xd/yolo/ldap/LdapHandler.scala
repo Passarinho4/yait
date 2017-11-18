@@ -82,6 +82,7 @@ class LdapHandler @Autowired()(template: LdapTemplate,
     andFilter.and(new HardcodedFilter(groupsFilter))
 
     val mapper: AttributesMapper[(String, String)] = attributes => {
+      println(s"ATRIBUTES: $attributes")
       attributes.getIDs.asScala.foreach(t => println(t))
       (attributes.get("cn").get().asInstanceOf[String], attributes.get("dn").get().asInstanceOf[String])
     }
