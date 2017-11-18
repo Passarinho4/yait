@@ -5,7 +5,7 @@ import javax.naming.directory.SearchControls
 import com.avsystem.commons.jiop.JavaInterop._
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
 import org.springframework.ldap.core.support.LdapContextSource
-import org.springframework.ldap.core.{AttributesMapper, LdapTemplate}
+import org.springframework.ldap.core.{AttributesMapper, ContextMapper, DirContextAdapter, LdapTemplate}
 import org.springframework.ldap.filter._
 import org.springframework.stereotype.Component
 
@@ -81,14 +81,13 @@ class LdapHandler @Autowired()(template: LdapTemplate,
     andFilter.and(new LikeFilter("objectclass", "groupOfNames"))
     andFilter.and(new HardcodedFilter(groupsFilter))
 
-    val mapper: AttributesMapper[(String, String)] = attributes => {
-      println(s"ATRIBUTES: $attributes")
-      println("111111111111111111111")
-      println(s"${attributes.get("cn")}")
-      println("111111111111111111111")
-      println(s"${attributes.get("dn")}")
-      attributes.getIDs.asScala.foreach(t => println(t))
-      (attributes.get("cn").get().asInstanceOf[String], attributes.get("dn").get().asInstanceOf[String])
+    val mapper: ContextMapper[(String, String)] = context => {
+      val ctx = context.asInstanceOf[DirContextAdapter]
+      val cn = ctx.getStringAttribute("cn")
+      val dn = ctx.getDn
+      println(s"CN: $cn")
+      println(s"DN: $dn")
+      (cn, dn.toString)
     }
     template.search("", andFilter.encode(), mapper).asScala.toMap
   }
