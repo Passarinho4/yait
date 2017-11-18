@@ -1,5 +1,6 @@
 package xd.yolo.api
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.typesafe.scalalogging.LazyLogging
 import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
@@ -87,6 +88,7 @@ class TopicController extends LazyLogging {
 
 object TopicController {
 
+  @JsonIgnoreProperties(ignoreUnknown = true)
   case class TopicRequest(title: String, description: String)
   case class VoteRequest(token: String)
 

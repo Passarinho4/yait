@@ -1,5 +1,6 @@
 package xd.yolo.api
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import org.bson.types
 import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,6 +41,7 @@ class PostController {
 
 object PostController {
 
+  @JsonIgnoreProperties(ignoreUnknown = true)
   case class PostRequest(content: String)
 
   case class PostResponse(id: String, topicId: String, authorId: String, authorLogin: String,
