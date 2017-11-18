@@ -3,7 +3,6 @@ package xd.yolo.ldap
 import com.avsystem.commons.jiop.JavaInterop._
 import org.springframework.beans.factory.annotation.{Qualifier, Value}
 import org.springframework.context.annotation.{Bean, ComponentScan, Configuration}
-import org.springframework.ldap.core.LdapTemplate
 import org.springframework.ldap.core.support.{DefaultTlsDirContextAuthenticationStrategy, LdapContextSource}
 
 @Configuration
@@ -24,9 +23,6 @@ class LdapConfig {
   @Bean
   @Qualifier("groupsContext")
   def groupsContextSource(): LdapContextSource = getContextSourceWithBase(ldapGroupsDn)
-
-  @Bean
-  def ldapTemplate(): LdapTemplate = new LdapTemplate(usersContextSource())
 
   def baseEnvironmentProperties(): JMap[String, AnyRef] = {
     val map = new JHashMap[String, AnyRef]()

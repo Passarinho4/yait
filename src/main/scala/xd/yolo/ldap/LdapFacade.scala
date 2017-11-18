@@ -28,7 +28,6 @@ class LdapFacade @Autowired()(ldapHandler: LdapHandler, userDataCache: UserDataC
   def getUserDataByUserGroup(groupName: String): List[UserData] = {
     val userDatas = ldapHandler.getUserDataByGroupName(groupName)
     userDataCache.putAll(userDatas)
-    println(s"USERS BY GROUP: $userDatas")
     userDatas
   }
 
