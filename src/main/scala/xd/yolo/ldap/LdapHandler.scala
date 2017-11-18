@@ -32,6 +32,7 @@ class LdapHandler @Autowired()(template: LdapTemplate,
     andFilter.and(new HardcodedFilter(usersFilter))
     andFilter.and(new EqualsFilter("uid", login))
     andFilter.and(new LikeFilter("memberof", s"$adminsGroupDn"))
+    println(s"FULL FILTER ADMIN: ${andFilter.encode()}")
     !template.search("", andFilter.encode(), SearchControls.ONELEVEL_SCOPE, new UserDataAttributesMapper())
       .isEmpty
   }
@@ -71,8 +72,8 @@ class LdapHandler @Autowired()(template: LdapTemplate,
     template.setContextSource(users)
     val andFilter = new AndFilter()
     andFilter.and(new HardcodedFilter(usersFilter))
-    println(s"LOOOL ${getGroupsNameToDn()(name)}")
     andFilter.and(new LikeFilter("memberof", s"${getGroupsNameToDn()(name)}"))
+    println(s"FULL FILTER: ${andFilter.encode()}")
     template.search("", andFilter.encode(), SearchControls.ONELEVEL_SCOPE, new UserDataAttributesMapper()).asScala.toList
   }
 
@@ -81,26 +82,14 @@ class LdapHandler @Autowired()(template: LdapTemplate,
     val andFilter = new AndFilter()
     andFilter.and(new LikeFilter("objectclass", "groupOfNames"))
     andFilter.and(new HardcodedFilter(groupsFilter))
-
-    val mapper: ContextMapper[(String, String)] = context => {
-      val ctx = context.asInstanceOf[DirContextAdapter]
-      val cn = ctx.getStringAttribute("cn")
-      ctx.getEnvironment
-      val dn = ctx.getNameInNamespace
-      println(s"CN: $cn")
-      println(s"DN: $dn")
-      (cn, dn.toString)
-    }
-
-    val mapper2 = new AbstractContextMapper[(String, String)] {
+    val mapper = new AbstractContextMapper[(String, String)] {
       override def doMapFromContext(ctx: DirContextOperations) = {
         val cn = ctx.getStringAttribute("cn")
         val dn = ctx.getNameInNamespace
-        println(s"MOŻE TERAZ: $dn")
         (cn, dn)
       }
     }
-    template.search("", andFilter.encode(), mapper2).asScala.toMap
+    template.search("", andFilter.encode(), mapper).asScala.toMap
   }
 
   def getGroupsNames(): List[String] = {
