@@ -85,7 +85,8 @@ class LdapHandler @Autowired()(template: LdapTemplate,
     val mapper: ContextMapper[(String, String)] = context => {
       val ctx = context.asInstanceOf[DirContextAdapter]
       val cn = ctx.getStringAttribute("cn")
-      val dn = ctx.getDn
+      ctx.getEnvironment
+      val dn = ctx.getNameInNamespace
       println(s"CN: $cn")
       println(s"DN: $dn")
       (cn, dn.toString)
