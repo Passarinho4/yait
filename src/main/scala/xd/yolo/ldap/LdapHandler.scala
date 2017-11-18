@@ -4,8 +4,8 @@ import javax.naming.directory.SearchControls
 
 import com.avsystem.commons.jiop.JavaInterop._
 import org.springframework.beans.factory.annotation.{Autowired, Qualifier, Value}
-import org.springframework.ldap.core.support.LdapContextSource
-import org.springframework.ldap.core.{AttributesMapper, ContextMapper, DirContextAdapter, LdapTemplate}
+import org.springframework.ldap.core._
+import org.springframework.ldap.core.support.{AbstractContextMapper, LdapContextSource}
 import org.springframework.ldap.filter._
 import org.springframework.stereotype.Component
 
@@ -91,7 +91,16 @@ class LdapHandler @Autowired()(template: LdapTemplate,
       println(s"DN: $dn")
       (cn, dn.toString)
     }
-    template.search("", andFilter.encode(), mapper).asScala.toMap
+
+    val mapper2 = new AbstractContextMapper[(String, String)] {
+      override def doMapFromContext(ctx: DirContextOperations) = {
+        val cn = ctx.getStringAttribute("cn")
+        val dn = ctx.getNameInNamespace
+        println(s"MOŻE TERAZ: $dn")
+        (cn, dn)
+      }
+    }
+    template.search("", andFilter.encode(), mapper2).asScala.toMap
   }
 
   def getGroupsNames(): List[String] = {
