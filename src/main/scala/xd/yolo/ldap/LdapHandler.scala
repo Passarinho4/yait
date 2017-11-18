@@ -33,8 +33,9 @@ class LdapHandler @Autowired()(template: LdapTemplate,
     andFilter.and(new EqualsFilter("uid", login))
     andFilter.and(new LikeFilter("memberof", s"$adminsGroupDn"))
     println(s"FULL FILTER ADMIN: ${andFilter.encode()}")
-    !template.search("", andFilter.encode(), SearchControls.ONELEVEL_SCOPE, new UserDataAttributesMapper())
-      .isEmpty
+    val userDatas = template.search("", andFilter.encode(), SearchControls.ONELEVEL_SCOPE, new UserDataAttributesMapper())
+    println(s"USER ADMIN: ${userDatas.asScala.toList}")
+    !userDatas.isEmpty
   }
 
   def auth(user: String, passwd: String): Try[Boolean] = {
