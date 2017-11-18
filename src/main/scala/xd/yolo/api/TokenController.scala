@@ -49,6 +49,7 @@ class TokenController {
       .filter(_.mail.isDefined)
       .map(e => (UserId(e.id), e.mail.get))
     val tokensMap = Token.generateForUsers(validUntil, request.votes, ids)
+    ids.foreach(pair => println(s"USER: ${pair._1.id}"))
     service.insertAll(tokensMap.values.toSeq)
     tokensMap.foreach(token => {
       mailSender.send(createMail(token._1, token._2))
