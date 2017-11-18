@@ -26,32 +26,32 @@ class TopicController extends LazyLogging {
 
   @GetMapping(Array("topics"))
   def topics(): Seq[TopicResponse] = {
-    service.getAll.map(TopicResponse.fromTopic)
+    service.getAll.map(fromTopic)
   }
 
   @GetMapping(Array("topics/{id}"))
   def topic(@PathVariable id: String): TopicResponse = {
-    service.getById(new ObjectId(id)).map(TopicResponse.fromTopic).orNull
+    service.getById(new ObjectId(id)).map(fromTopic).orNull
   }
 
   @GetMapping(Array("topics/active"))
   def activeTopics(): Seq[TopicResponse] = {
-    service.getAll(Opened).map(TopicResponse.fromTopic)
+    service.getAll(Opened).map(fromTopic)
   }
 
   @GetMapping(Array("topics/opened"))
   def openedTopics(): Seq[TopicResponse] = {
-    service.getAll(Opened).map(TopicResponse.fromTopic)
+    service.getAll(Opened).map(fromTopic)
   }
 
   @GetMapping(Array("topics/wontfix"))
   def wontfixTopics(): Seq[TopicResponse] = {
-    service.getAll(WontFix).map(TopicResponse.fromTopic)
+    service.getAll(WontFix).map(fromTopic)
   }
 
   @GetMapping(Array("topics/closed"))
   def closedTopics(): Seq[TopicResponse] = {
-    service.getAll(Closed).map(TopicResponse.fromTopic)
+    service.getAll(Closed).map(fromTopic)
   }
 
 
