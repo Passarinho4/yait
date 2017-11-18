@@ -83,6 +83,10 @@ class LdapHandler @Autowired()(template: LdapTemplate,
 
     val mapper: AttributesMapper[(String, String)] = attributes => {
       println(s"ATRIBUTES: $attributes")
+      println("111111111111111111111")
+      println(s"${attributes.get("cn")}")
+      println("111111111111111111111")
+      println(s"${attributes.get("dn")}")
       attributes.getIDs.asScala.foreach(t => println(t))
       (attributes.get("cn").get().asInstanceOf[String], attributes.get("dn").get().asInstanceOf[String])
     }
