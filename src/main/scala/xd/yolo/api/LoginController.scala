@@ -3,13 +3,14 @@ package xd.yolo.api
 import com.avsystem.commons.jiop.JavaInterop._
 import io.jsonwebtoken.{JwtBuilder, Jwts, SignatureAlgorithm}
 import org.springframework.beans.factory.annotation.{Autowired, Value}
+import org.springframework.http.{HttpStatus, ResponseEntity}
 import org.springframework.security.crypto.codec.Base64
 import org.springframework.util.Base64Utils
 import org.springframework.web.bind.annotation.{GetMapping, RequestHeader, RestController}
 import xd.yolo.ldap.UserService
 import xd.yolo.ldap.UserService.UserType
 
-import scala.util.Try
+import scala.util.{Success, Try}
 
 @RestController
 class LoginController {
@@ -28,6 +29,20 @@ class LoginController {
           userId <- service.getUserId(loginPassword.login)
           token <- generate(loginPassword.login, userId, userType, secret)
     } yield token).get
+  }
+
+  @GetMapping(Array("/login/remoteUser"))
+  def loginRemote(@RequestHeader("X-Remote-User") login: String): ResponseEntity[Token] = {
+    val token = for {
+      userId <- service.getUserId(login)
+      userType = service.getUserTypeForUser(login)
+      token <- generate(login, userId, userType, secret)
+    } yield token
+
+    token match {
+      case Success(t) => new ResponseEntity[Token](t, HttpStatus.OK)
+      case _ => new ResponseEntity[Token](HttpStatus.NOT_FOUND)
+    }
   }
 
   @GetMapping(Array("/healthCheck"))
