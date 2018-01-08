@@ -79,11 +79,11 @@ class TokenController {
 object TokenController {
 
   case class TokenResponse(id: String, token: String, userId: Option[UserId],
-                           creationDate: DateTime, validUntil: DateTime, votesLeft: Int)
+                           creationDate: Long, validUntil: Long, votesLeft: Int)
 
   object TokenResponse {
     def fromToken(token: Token): TokenResponse = {
-      TokenResponse(token.id.toHexString, token.token, token.userId, token.creationDate, token.validUntil, token.votesLeft)
+      TokenResponse(token.id.toHexString, token.token, token.userId, token.creationDate.toDate.getTime, token.validUntil.toDate.getTime, token.votesLeft)
     }
   }
 
